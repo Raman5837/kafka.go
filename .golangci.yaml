@@ -1,0 +1,74 @@
+# This File Contains Configuration For Various Linters
+
+# Output configuration options
+output:
+  # colored-line-number|line-number|json|tab|check-style|code-climate, Default Is "colored-line-number"
+  format: colored-line-number
+
+  # Print Lines Of Code With Issue, Default Is true
+  print-issued-lines: true
+
+  # Print Linter Name In The End Of Issue Text, Default Is true
+  print-linter-name: true
+
+  # Make Issues Output Unique By Line, Default Is true
+  uniq-by-line: true
+
+# All Available Settings Of Specific Linters
+linters-settings:
+  funlen:
+    lines: 60
+    statements: 40
+
+  nestif:
+    # Minimal Complexity Of `If Statements` To Report, 5 By Default
+    min-complexity: 4
+
+  gocyclo:
+    # Minimal Code Complexity To Report. (Default Value = 30)
+    min-complexity: 10
+
+  golint:
+    # Minimal confidence for issues, default is 0.8
+    min-confidence: 0.8
+
+  exhaustive:
+    # Presence Of "default" Case In Switch Statements Satisfies Exhaustiveness,
+    # Even If All Enum Members Are Not Listed.
+    default-signifies-exhaustive: true
+
+  lll:
+    # max line length, lines longer will be reported. Default is 120.
+    # '\t' is counted as 1 character by default, and can be changed with the tab-width option
+
+    line-length: 80
+    # Tab Width In Spaces. Default To 1.
+    tab-width: 4
+
+  maligned:
+    # print struct with more effective memory layout or not, false by default
+    suggest-new: true
+
+  misspell:
+    # Correct spellings using locale preferences for US or UK.
+    # Default is to use a neutral variety of English.
+    # Setting locale to US will correct the British spelling of 'colour' to 'color'.
+    locale: US
+    ignore-words:
+      - "aman"
+
+  nakedret:
+    # Make An Issue If Func Has More Lines Of Code Than This Setting And It Has Naked Returns; Default Is 30
+    max-func-lines: 50
+
+linters:
+  presets:
+    - bugs
+
+  enable:
+    - exhaustive
+
+  disable:
+    - contextcheck
+
+  fast: false
