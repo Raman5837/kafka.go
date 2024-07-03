@@ -26,6 +26,9 @@ func main() {
 	shutdown := make(chan os.Signal, 1)
 	settings.GracefulShutdownHandler(app, shutdown)
 
+	// This Will Get Execute, After The Main Function
+	defer settings.InitiateCleanupProcess()
+
 	// Listening on PORT Defined In ENV
 	serverPort := ":" + utils.GetEnv("SERVER_PORT")
 	if serverError := app.Listen(serverPort); serverError != nil {
