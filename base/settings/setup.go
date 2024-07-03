@@ -6,6 +6,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/Raman5837/kafka.go/base/database"
 	"github.com/Raman5837/kafka.go/base/middleware"
 	"github.com/Raman5837/kafka.go/base/utils"
 	"github.com/gofiber/fiber/v2"
@@ -40,6 +41,9 @@ func NewFiberApp() *fiber.App {
 	// Attaching All Middlewares
 	AddMiddleware(app)
 
+	// Connect All Databases
+	ConnectDataBase()
+
 	return app
 }
 
@@ -54,6 +58,16 @@ func AddMiddleware(app *fiber.App) {
 
 	// 3. API Error Handler
 	app.Use(middleware.ErrorHandler())
+}
+
+// Connect To DataBase
+func ConnectDataBase() {
+
+	// Initialize Database Connections
+	if dbError := database.EstablishConnection(); dbError != nil {
+		utils.Logger.Fatal(dbError, "Error While Connecting To Database: ")
+	}
+
 }
 
 /*
@@ -78,4 +92,27 @@ func GracefulShutdownHandler(app *fiber.App, shutdown chan os.Signal) {
 		close(shutdown)
 	}()
 
+}
+
+/*
+Performs Cleanup Tasks Before Shutdown And After Program Exits.
+
+It Closes All The DB Connections And Redis Connections As Of Now.
+*/
+func InitiateCleanupProcess() {
+
+	sqlite := database.DBManager.SqliteDB
+
+	if sqlite != nil {
+
+		if db, err := sqlite.DB(); err == nil {
+
+			if closingError := db.Close(); closingError != nil {
+				utils.Logger.Error(closingError, "Error While Closing Sqlite DB Connection")
+			} else {
+				utils.Logger.Info("Sqlite DB Connection Closed")
+			}
+		}
+
+	}
 }

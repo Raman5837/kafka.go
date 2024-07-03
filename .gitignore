@@ -23,3 +23,6 @@ go.work.sum
 
 # Env Files
 .env
+
+# Sqlite3 DB
+.sqlite3
