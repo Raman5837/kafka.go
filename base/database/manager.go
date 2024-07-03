@@ -16,7 +16,7 @@ type DatabaseManager struct {
 // SqlLiteConfig represents configuration for sqlite database
 type SqlLiteConfig struct {
 	Reset      bool
-	Tables     *[]string
+	Tables     *[]Model
 	GCInterval *time.Duration
 
 	Database        string

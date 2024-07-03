@@ -37,6 +37,13 @@ func EstablishConnection() error {
 		DBManager.ResetTable(*config.Tables)
 	}
 
+	migrationErrors := DBManager.MigrateAllModels()
+	for migrationError := range migrationErrors {
+		for modelName, exception := range migrationError {
+			utils.Logger.ErrorF(exception, "Failed To Migrate Model: %s", modelName)
+		}
+	}
+
 	return connectionErr
 
 }
