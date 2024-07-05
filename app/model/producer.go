@@ -27,8 +27,8 @@ type Partition struct {
 	ID          uint   `gorm:"primaryKey"`
 	PartitionId uint64 `gorm:"not null"`
 
-	TopicID uint  `gorm:"not null"`
-	Topic   Topic `gorm:"foreignKey:TopicID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	TopicID uint64 `gorm:"not null"`
+	Topic   Topic  `gorm:"foreignKey:TopicID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
 func (instance Partition) TableName() string {
@@ -44,10 +44,10 @@ type Message struct {
 	model.AbstractModel
 	ID uint `gorm:"primaryKey"`
 
-	Offset uint64      `gorm:"not null"`
+	Offset int64       `gorm:"not null"`
 	Value  interface{} `gorm:"type:json"`
 
-	PartitionID uint      `gorm:"not null"`
+	PartitionID uint64    `gorm:"not null"`
 	Partition   Partition `gorm:"foreignKey:PartitionID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
@@ -64,10 +64,10 @@ type LastAssignedPartition struct {
 	model.AbstractModel
 	ID uint `gorm:"primaryKey"`
 
-	TopicID uint  `gorm:"unique;not null"`
-	Topic   Topic `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	TopicID uint64 `gorm:"unique;not null"`
+	Topic   Topic  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 
-	PartitionID uint      `gorm:"not null"`
+	PartitionID uint64    `gorm:"not null"`
 	Partition   Partition `gorm:"foreignKey:PartitionID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 }
 

@@ -8,12 +8,12 @@ import (
 
 // Handler For The Base Endpoint
 func BaseHandler(context *fiber.Ctx) error {
-	return context.Status(fiber.StatusOK).JSON(utils.HttpResponse("Kafka.go Is Ready To Serve!", nil, true))
+	return context.Status(fiber.StatusOK).JSON(utils.HttpResponseOK(nil, "Kafka.go Is Ready To Serve!"))
 }
 
 // Health Check API Handler
 func HealthCheck(context *fiber.Ctx) error {
-	return context.Status(fiber.StatusOK).JSON(utils.HttpResponse("Kafka.go Is Up And Running", nil, true))
+	return context.Status(fiber.StatusOK).JSON(utils.HttpResponseOK(nil, "Kafka.go Is Up And Running"))
 }
 
 // Handler To Monitor Service Resources

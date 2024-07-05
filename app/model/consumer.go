@@ -32,7 +32,7 @@ type Consumer struct {
 
 	ConsumerID uuid.UUID `gorm:"type:uuid;unique;not null"`
 
-	GroupID uint          `gorm:"not null"`
+	GroupID uint64        `gorm:"not null"`
 	Group   ConsumerGroup `gorm:"foreignKey:GroupID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
@@ -56,10 +56,10 @@ type Offset struct {
 	ID uint `gorm:"primaryKey"`
 
 	Number     uint64   `gorm:"not null"`
-	ConsumerID uint     `gorm:"not null"`
+	ConsumerID uint64   `gorm:"not null"`
 	Consumer   Consumer `gorm:"foreignKey:ConsumerID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 
-	PartitionID uint      `gorm:"not null"`
+	PartitionID uint64    `gorm:"not null"`
 	Partition   Partition `gorm:"foreignKey:PartitionID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
@@ -76,13 +76,13 @@ type ConsumerAssignment struct {
 	model.AbstractModel
 	ID uint `gorm:"primaryKey"`
 
-	ConsumerID uint     `gorm:"not null"`
+	ConsumerID uint64   `gorm:"not null"`
 	Consumer   Consumer `gorm:"foreignKey:ConsumerID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 
-	GroupID uint          `gorm:"not null"`
+	GroupID uint64        `gorm:"not null"`
 	Group   ConsumerGroup `gorm:"foreignKey:GroupID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 
-	PartitionID uint      `gorm:"not null"`
+	PartitionID uint64    `gorm:"not null"`
 	Partition   Partition `gorm:"foreignKey:PartitionID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
