@@ -7,7 +7,7 @@ import (
 )
 
 // Get Offset For Given Consumer And Partition
-func GetOffset(consumerId uint64, partitionId uint64) (Offset *types.GetOffset, exception error) {
+func GetConsumerOffset(consumerId uint64, partitionId uint64) (Offset *types.GetOffset, exception error) {
 
 	model := model.Offset{}
 	DB := database.DBManager.SqliteDB
