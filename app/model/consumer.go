@@ -79,9 +79,6 @@ type ConsumerAssignment struct {
 	ConsumerID uint64   `gorm:"not null"`
 	Consumer   Consumer `gorm:"foreignKey:ConsumerID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 
-	GroupID uint64        `gorm:"not null"`
-	Group   ConsumerGroup `gorm:"foreignKey:GroupID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-
 	PartitionID uint64    `gorm:"not null"`
 	Partition   Partition `gorm:"foreignKey:PartitionID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
@@ -91,5 +88,5 @@ func (instance ConsumerAssignment) TableName() string {
 }
 
 func (instance ConsumerAssignment) String() string {
-	return fmt.Sprintf("Management Of Consumer: %d Of Group: %d And Partition: %d", instance.ConsumerID, instance.GroupID, instance.PartitionID)
+	return fmt.Sprintf("Management Of Consumer: %d Of Group: %d And Partition: %d", instance.ConsumerID, instance.Consumer.GroupID, instance.PartitionID)
 }
