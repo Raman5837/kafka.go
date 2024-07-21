@@ -48,7 +48,7 @@ func (service *ProducerService) AddNewMessage(payload *types.ProduceMessageReque
 	response := &types.ProduceMessageResponseEntity{
 		Value:       newMessage.Value,
 		Offset:      newMessage.Offset,
-		PartitionId: &newMessage.PartitionID,
+		PartitionId: newMessage.PartitionID,
 		TopicId:     newMessage.Partition.TopicID,
 	}
 

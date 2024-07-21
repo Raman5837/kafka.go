@@ -6,17 +6,59 @@ import (
 	"github.com/Raman5837/kafka.go/base/database"
 )
 
-// Get ConsumerAssignment With Given Consumer Id, Partition Id And Group Id
-func GetConsumerAssignment(consumerId int, groupId int, partitionId int) (Assignment *types.GetConsumerAssignment, exception error) {
+// Get ConsumerAssignment With Given Partition Id And Group Id
+func GetConsumerAssignment(groupId int, partitionId int) (Assignment *types.GetConsumerAssignment, exception error) {
 
 	DB := database.DBManager.SqliteDB
 	model := model.ConsumerAssignment{}
 	responseInstance := &types.GetConsumerAssignment{}
-	queryResponse := DB.Table(model.TableName()).
-		Where("consumer_id = ? AND group_id = ? AND partition_id = ?", consumerId, groupId, partitionId).
-		First(responseInstance)
+	queryResponse := DB.Table(model.TableName()).Where("group_id = ? AND partition_id = ?", groupId, partitionId).First(responseInstance)
 
 	return responseInstance, queryResponse.Error
+
+}
+
+// Get All Assigned Consumers For Given Group Id
+func GetAssignedConsumersOfAGroup(groupId uint64) (Assignment *[]types.GetConsumerAssignment, exception error) {
+
+	DB := database.DBManager.SqliteDB
+	model := model.ConsumerAssignment{}
+	responseInstance := &[]types.GetConsumerAssignment{}
+	queryResponse := DB.Table(model.TableName()).Where("group_id = ?", groupId).Find(responseInstance)
+
+	return responseInstance, queryResponse.Error
+
+}
+
+// Create A ConsumerAssignment For Given Consumer And Partition
+func AssignPartitionToConsumer(instance model.ConsumerAssignment) (Assignment model.ConsumerAssignment, exception error) {
+
+	DB := database.DBManager.SqliteDB
+	queryResponse := DB.Table(instance.TableName()).Create(&instance)
+
+	return instance, queryResponse.Error
+
+}
+
+// Delete ConsumerAssignment For Given Consumer Id
+func DeleteConsumerAssignment(consumerId uint64) (exception error) {
+
+	model := model.ConsumerAssignment{}
+	DB := database.DBManager.SqliteDB
+	queryResponse := DB.Table(model.TableName()).Where("consumer_id = ?", consumerId).Delete(model)
+
+	return queryResponse.Error
+
+}
+
+// Delete ConsumerAssignment For Given Consumer Ids
+func DeleteAllConsumerAssignment(consumerIds []uint64) (exception error) {
+
+	model := model.ConsumerAssignment{}
+	DB := database.DBManager.SqliteDB
+	queryResponse := DB.Table(model.TableName()).Where("consumer_id IN ?", consumerIds).Delete(model)
+
+	return queryResponse.Error
 
 }
 

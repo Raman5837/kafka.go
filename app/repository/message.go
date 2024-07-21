@@ -6,13 +6,13 @@ import (
 	"github.com/Raman5837/kafka.go/base/database"
 )
 
-// Get Message For Given Partition And Offset
-func GetMessage(partitionId int, offset int) (Message *types.GetMessage, exception error) {
+// Get Messages For Given Partition And Offset
+func GetMessages(partitionId uint64, offset uint64) (Messages *[]types.GetMessage, exception error) {
 
 	model := model.Message{}
 	DB := database.DBManager.SqliteDB
-	responseInstance := &types.GetMessage{}
-	queryResponse := DB.Table(model.TableName()).Where("partition_id = ? AND offset = ?", partitionId, offset).First(responseInstance)
+	responseInstance := &[]types.GetMessage{}
+	queryResponse := DB.Table(model.TableName()).Where("partition_id = ? AND offset = ?", partitionId, offset).Find(responseInstance)
 
 	return responseInstance, queryResponse.Error
 
