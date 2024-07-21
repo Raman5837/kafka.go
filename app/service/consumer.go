@@ -20,6 +20,11 @@ func NewConsumerService() *ConsumerService {
 func (service *ConsumerService) AddNewConsumer(payload *types.AddNewConsumerRequestEntity) (Consumer *types.GetConsumer, exception error) {
 
 	instance, queryErr := repository.AddNewConsumer(&model.Consumer{GroupID: payload.GroupID})
+
+	if queryErr != nil {
+		return nil, queryErr
+	}
+
 	newConsumer := types.GetConsumer{GroupID: instance.Group.ID, ConsumerID: instance.ConsumerID}
 
 	// Let's Perform Re-balancing
@@ -31,6 +36,12 @@ func (service *ConsumerService) AddNewConsumer(payload *types.AddNewConsumerRequ
 	return &newConsumer, queryErr
 }
 
+// Get Committed Offset For Give Consumer And Partition
+func (service *ConsumerService) GetCommittedOffset(consumerId uint64, partitionId uint64) (Offset *types.GetOffset, exception error) {
+
+	return repository.GetConsumerOffset(consumerId, partitionId)
+}
+
 // Get Message To Consume For Requested Consumer
 func (service *ConsumerService) GetMessages(payload *types.GetMessageToConsumeRequestEntity) (Messages *types.ConsumeMessageResponseEntity, exception error) {
 
@@ -39,8 +50,18 @@ func (service *ConsumerService) GetMessages(payload *types.GetMessageToConsumeRe
 		return nil, consumerErr
 	}
 
+	committedOffset, queryErr := service.GetCommittedOffset(payload.ConsumerId, payload.PartitionId)
+
+	nextOffset := func() uint64 {
+		// Start From Beginning If `committedOffset` Is nil Or Something Breaks While Fetching The Committed Offset.
+		if queryErr != nil || committedOffset == nil {
+			return 0
+		}
+		return committedOffset.Number
+	}()
+
 	// Fetch New Message
-	messages, messageErr := repository.GetMessages(payload.PartitionId, payload.Offset)
+	messages, messageErr := repository.GetMessages(payload.PartitionId, nextOffset)
 	if messageErr != nil {
 		return nil, messageErr
 	}
