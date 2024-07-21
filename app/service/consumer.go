@@ -5,6 +5,7 @@ import (
 	"github.com/Raman5837/kafka.go/app/repository"
 	"github.com/Raman5837/kafka.go/app/types"
 	"github.com/Raman5837/kafka.go/app/utils"
+	"github.com/Raman5837/kafka.go/base/config"
 )
 
 // Consumer Service
@@ -53,15 +54,17 @@ func (service *ConsumerService) GetMessages(payload *types.GetMessageToConsumeRe
 	committedOffset, queryErr := service.GetCommittedOffset(payload.ConsumerId, payload.PartitionId)
 
 	nextOffset := func() uint64 {
-		// Start From Beginning If `committedOffset` Is nil Or Something Breaks While Fetching The Committed Offset.
+		// Let's Consume From Beginning If `committedOffset` Is nil Or Something Breaks While Fetching The Committed Offset.
 		if queryErr != nil || committedOffset == nil {
 			return 0
 		}
 		return committedOffset.Number
 	}()
 
+	baseConfig := config.GetKafkaConfig()
+
 	// Fetch New Message
-	messages, messageErr := repository.GetMessages(payload.PartitionId, nextOffset)
+	messages, messageErr := repository.GetMessages(payload.PartitionId, nextOffset, baseConfig.Consumer.FetchSize)
 	if messageErr != nil {
 		return nil, messageErr
 	}

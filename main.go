@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/Raman5837/kafka.go/base/config"
 	"github.com/Raman5837/kafka.go/base/settings"
 	"github.com/Raman5837/kafka.go/base/utils"
 	"github.com/Raman5837/kafka.go/routes"
@@ -18,6 +19,9 @@ func main() {
 
 	// New Fiber App.
 	app := settings.NewFiberApp()
+
+	// Initialize Global Kafka Configurations
+	config.InitKafkaConfig()
 
 	// Registering All Routes
 	routes.RegisterAllRoutes(app)
