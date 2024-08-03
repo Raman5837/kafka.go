@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/Raman5837/kafka.go/app/model"
 	"github.com/Raman5837/kafka.go/app/types"
 	"github.com/Raman5837/kafka.go/base/database"
@@ -19,12 +21,55 @@ func GetConsumerAssignment(groupId int, partitionId int) (Assignment *types.GetC
 }
 
 // Get All Assigned Consumers For Given Group Id
-func GetAssignedConsumersOfAGroup(groupId uint64) (Assignment *[]types.GetConsumerAssignment, exception error) {
+func GetAssignedConsumersOfAGroup(groupId uint) (Assignment *[]types.GetConsumerAssignment, exception error) {
 
 	DB := database.DBManager.SqliteDB
 	model := model.ConsumerAssignment{}
 	responseInstance := &[]types.GetConsumerAssignment{}
 	queryResponse := DB.Table(model.TableName()).Where("group_id = ?", groupId).Find(responseInstance)
+
+	return responseInstance, queryResponse.Error
+
+}
+
+// Get All Assigned Consumers For Given Slice Of Group Ids Or All For All Active Groups
+func GetAllAssignedConsumers(groupIds *[]uint) (Assignment *[]types.GetConsumerAssignment, exception error) {
+
+	DB := database.DBManager.SqliteDB
+	consumerAssignment := model.ConsumerAssignment{}
+	responseInstance := &[]types.GetConsumerAssignment{}
+
+	query := fmt.Sprintf(`
+		SELECT
+			assignment.id AS id,
+			topic.id AS topic_id,
+			partition.id AS partition_id,
+			consumer.group_id AS group_id,
+			consumer.consumer_id AS consumer_id,
+			assignment.created_at AS created_at
+
+		FROM
+			%s AS assignment
+
+		JOIN %s AS consumer ON assignment.consumer_id = consumer.consumer_id
+		JOIN %s AS partition ON consumer.consumer_id = partition.id
+		JOIN %s AS topic ON partition.topic_id = topic.id
+		JOIN %s AS group ON consumer.group_id = group.id
+		WHERE
+			group.is_active = true
+	`,
+		consumerAssignment.TableName(),
+		consumerAssignment.Consumer.TableName(),
+		consumerAssignment.Partition.TableName(),
+		consumerAssignment.Partition.Topic.TableName(),
+		consumerAssignment.Consumer.Group.TableName(),
+	)
+
+	if groupIds != nil {
+		query += " AND consumer.group_id IN (?)"
+	}
+
+	queryResponse := DB.Raw(query, groupIds).Scan(responseInstance)
 
 	return responseInstance, queryResponse.Error
 
@@ -45,18 +90,18 @@ func DeleteConsumerAssignment(consumerId uint64) (exception error) {
 
 	model := model.ConsumerAssignment{}
 	DB := database.DBManager.SqliteDB
-	queryResponse := DB.Table(model.TableName()).Where("consumer_id = ?", consumerId).Delete(model)
+	queryResponse := DB.Table(model.TableName()).Where("consumer_id = ?", consumerId).Update("is_deleted", true)
 
 	return queryResponse.Error
 
 }
 
 // Delete ConsumerAssignment For Given Consumer Ids
-func DeleteAllConsumerAssignment(consumerIds []uint64) (exception error) {
+func DeleteAllConsumerAssignment(consumerIds []uint) (exception error) {
 
 	model := model.ConsumerAssignment{}
 	DB := database.DBManager.SqliteDB
-	queryResponse := DB.Table(model.TableName()).Where("consumer_id IN ?", consumerIds).Delete(model)
+	queryResponse := DB.Table(model.TableName()).Where("consumer_id IN ?", consumerIds).Update("is_deleted", true)
 
 	return queryResponse.Error
 
@@ -77,7 +122,7 @@ func GetLastAssignedPartition(topicId int, partitionId int) (LastAssignedPartiti
 }
 
 // Get LastAssignedPartition With Given Topic
-func GetLastAssignedPartitionForTopic(topicId uint64) (LastAssignedPartition *types.GetLastAssignedPartition, exception error) {
+func GetLastAssignedPartitionForTopic(topicId uint) (LastAssignedPartition *types.GetLastAssignedPartition, exception error) {
 
 	DB := database.DBManager.SqliteDB
 	model := model.LastAssignedPartition{TopicID: topicId}

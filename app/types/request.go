@@ -12,8 +12,8 @@ type CreateTopicRequestEntity struct {
 
 // Add New Consumer API Request Payload
 type AddNewConsumerRequestEntity struct {
-	GroupID uint64 `json:"group_id"`
-	TopicId uint64 `json:"topic_id"`
+	GroupId uint `json:"group_id"`
+	TopicId uint `json:"topic_id"`
 }
 
 // Add New Consumer Group API Request Payload
@@ -24,14 +24,14 @@ type AddNewConsumerGroupRequestEntity struct {
 // Produce Message API Request Payload
 type ProduceMessageRequestEntity struct {
 	Value       interface{} `json:"value"`
-	TopicId     uint64      `json:"topic_id"`
-	PartitionId *uint64     `json:"partition_id"`
+	TopicId     uint        `json:"topic_id"`
+	PartitionId *uint       `json:"partition_id"`
 }
 
 // Get Message To Consumer API Request Payload
 type GetMessageToConsumeRequestEntity struct {
 	Value       interface{} `json:"value"`
-	GroupID     uint64      `json:"group_id"`
-	ConsumerId  uint64      `json:"consumer_id"`
-	PartitionId uint64      `json:"partition_id"`
+	GroupId     uint        `json:"group_id"`
+	ConsumerId  uint        `json:"consumer_id"`
+	PartitionId uint        `json:"partition_id"`
 }

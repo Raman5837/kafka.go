@@ -17,7 +17,7 @@ func NewRebalanceService() *RebalanceService {
 }
 
 // Re-balance The Consumer Group
-func (instance *RebalanceService) RebalanceGroup(groupId uint64, topicId uint64) (exception error) {
+func (instance *RebalanceService) RebalanceGroup(groupId uint, topicId uint) (exception error) {
 
 	DB := database.DBManager.SqliteDB
 
@@ -34,23 +34,26 @@ func (instance *RebalanceService) RebalanceGroup(groupId uint64, topicId uint64)
 		count := len(allConsumers)
 
 		if count == 0 {
+			utils.Logger.InfoF("[CG Rebalancing]: No Consumer Found For Group Id: %d", groupId)
 			return nil
 		}
 
 		// Get All Partitions For The Given Topic
 		partitions, queryErr := repository.GetPartitionByTopicId(topicId)
 		if queryErr != nil {
+			utils.Logger.ErrorF(queryErr, "[CG Rebalancing]: Error While Finding Partitions For Topic: %d", topicId)
 			return queryErr
 		}
 
 		allPartitions := *partitions
 		if len(allPartitions) == 0 {
+			utils.Logger.InfoF("[CG Rebalancing]: No Partitions Found For Topic: %d", topicId)
 			return nil
 		}
 
-		ids := make([]uint64, 0)
+		ids := make([]uint, 0)
 		for _, consumer := range allConsumers {
-			ids = append(ids, uint64(consumer.Id))
+			ids = append(ids, consumer.Id)
 		}
 
 		// Delete Existing ConsumerAssignment
@@ -64,8 +67,8 @@ func (instance *RebalanceService) RebalanceGroup(groupId uint64, topicId uint64)
 			consumer := allConsumers[index%count]
 
 			instance := model.ConsumerAssignment{
-				ConsumerID:  uint64(consumer.Id),
-				PartitionID: uint64(partition.Id),
+				ConsumerId:  consumer.Id,
+				PartitionId: partition.Id,
 			}
 
 			if _, queryErr := repository.AssignPartitionToConsumer(instance); queryErr != nil {

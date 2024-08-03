@@ -17,7 +17,7 @@ func NewPartitionAssigner() interfaces.PartitionAssignerInterface {
 }
 
 // Get The Next Partition To Assign (Using Round-Robin Fashion)
-func (assignor *partitionAssigner) Next(topicId uint64) (*types.GetPartition, error) {
+func (assignor *partitionAssigner) Next(topicId uint) (*types.GetPartition, error) {
 
 	partitions, queryErr := repository.GetPartitionByTopicId(topicId)
 
@@ -41,9 +41,9 @@ func (assignor *partitionAssigner) Next(topicId uint64) (*types.GetPartition, er
 	nextPartition := allPartitions[nextPartitionIndex]
 
 	// Update The LastAssignedPartition
-	newObject := &model.LastAssignedPartition{TopicID: topicId, PartitionID: nextPartition.PartitionId}
+	newObject := &model.LastAssignedPartition{TopicID: topicId, PartitionId: nextPartition.PartitionId}
 	if updatedAssigned, queryErr := repository.SaveLastAssignedPartition(newObject); queryErr == nil {
-		utils.Logger.InfoF("LastAssignedPartition For Topic %v Updated With Partition: %v", topicId, updatedAssigned.PartitionID)
+		utils.Logger.InfoF("LastAssignedPartition For Topic %v Updated With Partition: %v", topicId, updatedAssigned.PartitionId)
 	}
 
 	return &nextPartition, nil
@@ -51,7 +51,7 @@ func (assignor *partitionAssigner) Next(topicId uint64) (*types.GetPartition, er
 }
 
 // Helper Function To Get Partition Index If Exists Else Returns -1
-func getPartitionIndex(partitions []types.GetPartition, partitionId uint64) int {
+func getPartitionIndex(partitions []types.GetPartition, partitionId uint) int {
 
 	for index, partition := range partitions {
 
