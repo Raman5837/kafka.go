@@ -7,7 +7,7 @@ import (
 )
 
 // Get Messages For Given Partition And Offset >= Given Offset Number With Given Limit
-func GetMessages(partitionId uint64, offset uint64, limit int) (Messages *[]types.GetMessage, exception error) {
+func GetMessages(partitionId uint, offset uint64, limit int) (Messages *[]types.GetMessage, exception error) {
 
 	model := model.Message{}
 	DB := database.DBManager.SqliteDB

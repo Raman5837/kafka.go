@@ -71,9 +71,9 @@ func InitKafkaConfig() {
 		func() {
 			baseConfig = KafkaConfiguration{
 				Producer: ProducerConfig{
-					BatchSize:     100,
+					BatchSize:     10,
 					Compression:   "none",
-					BufferMemory:  33554432,
+					BufferMemory:  33554432, // 32 MB
 					FlushInterval: 5 * time.Second,
 					LingerMS:      500 * time.Millisecond,
 				},

@@ -7,7 +7,7 @@ import (
 )
 
 // Get Partition With Given Topic Id And Partition Id
-func GetPartition(topicId uint64, partitionId uint64) (Partition *types.GetPartition, exception error) {
+func GetPartition(topicId uint, partitionId uint) (Partition *types.GetPartition, exception error) {
 
 	model := model.Partition{}
 	DB := database.DBManager.SqliteDB
@@ -19,7 +19,7 @@ func GetPartition(topicId uint64, partitionId uint64) (Partition *types.GetParti
 }
 
 // Get Partition With Given Topic Id
-func GetPartitionByTopicId(topicId uint64) (Partition *[]types.GetPartition, exception error) {
+func GetPartitionByTopicId(topicId uint) (Partition *[]types.GetPartition, exception error) {
 
 	model := model.Partition{}
 	DB := database.DBManager.SqliteDB

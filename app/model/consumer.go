@@ -30,15 +30,15 @@ type Consumer struct {
 	model.AbstractModel
 	ID uint `gorm:"primaryKey"`
 
-	ConsumerID uuid.UUID `gorm:"type:uuid;unique;not null"`
+	ConsumerId uuid.UUID `gorm:"type:uuid;unique;not null"`
 
-	GroupID uint64        `gorm:"not null"`
+	GroupID uint          `gorm:"not null"`
 	Group   ConsumerGroup `gorm:"foreignKey:GroupID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
-// Add Default Value For Column `ConsumerID`
+// Add Default Value For Column `ConsumerId`
 func (instance *Consumer) BeforeCreate(transaction *gorm.DB) error {
-	instance.ConsumerID = uuid.New()
+	instance.ConsumerId = uuid.New()
 	return nil
 }
 
@@ -47,7 +47,7 @@ func (instance Consumer) TableName() string {
 }
 
 func (instance Consumer) String() string {
-	return fmt.Sprintf("Consumer: %s Of Group: %s", instance.ConsumerID, instance.Group.Name)
+	return fmt.Sprintf("Consumer: %s Of Group: %s", instance.ConsumerId, instance.Group.Name)
 }
 
 // Stores Current Offset Of The Consumer In The Associated Partition
@@ -56,10 +56,10 @@ type Offset struct {
 	ID uint `gorm:"primaryKey"`
 
 	Number     uint64   `gorm:"not null"`
-	ConsumerID uint64   `gorm:"not null"`
+	ConsumerId uint     `gorm:"not null"`
 	Consumer   Consumer `gorm:"foreignKey:ConsumerID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 
-	PartitionID uint64    `gorm:"not null"`
+	PartitionId uint      `gorm:"not null"`
 	Partition   Partition `gorm:"foreignKey:PartitionID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
@@ -68,7 +68,7 @@ func (instance Offset) TableName() string {
 }
 
 func (instance Offset) String() string {
-	return fmt.Sprintf("Offset Having Number: %d For Consumer: %d Of Partition: %d", instance.Number, instance.ConsumerID, instance.PartitionID)
+	return fmt.Sprintf("Offset Having Number: %d For Consumer: %d Of Partition: %d", instance.Number, instance.ConsumerId, instance.PartitionId)
 }
 
 // To Manage Consumer Rebalancing, Partitions Assignments And All
@@ -76,10 +76,10 @@ type ConsumerAssignment struct {
 	model.AbstractModel
 	ID uint `gorm:"primaryKey"`
 
-	ConsumerID uint64   `gorm:"not null"`
+	ConsumerId uint     `gorm:"not null"`
 	Consumer   Consumer `gorm:"foreignKey:ConsumerID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 
-	PartitionID uint64    `gorm:"not null"`
+	PartitionId uint      `gorm:"not null"`
 	Partition   Partition `gorm:"foreignKey:PartitionID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
@@ -88,5 +88,5 @@ func (instance ConsumerAssignment) TableName() string {
 }
 
 func (instance ConsumerAssignment) String() string {
-	return fmt.Sprintf("Management Of Consumer: %d Of Group: %d And Partition: %d", instance.ConsumerID, instance.Consumer.GroupID, instance.PartitionID)
+	return fmt.Sprintf("Management Of Consumer: %d Of Group: %d And Partition: %d", instance.ConsumerId, instance.Consumer.GroupID, instance.PartitionId)
 }

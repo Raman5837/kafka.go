@@ -24,11 +24,11 @@ func (instance Topic) String() string {
 // Represents A Kafka Partition
 type Partition struct {
 	model.AbstractModel
-	ID          uint   `gorm:"primaryKey"`
-	PartitionId uint64 `gorm:"not null"`
+	ID          uint `gorm:"primaryKey"`
+	PartitionId uint `gorm:"not null"`
 
-	TopicID uint64 `gorm:"not null"`
-	Topic   Topic  `gorm:"foreignKey:TopicID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	TopicId uint  `gorm:"not null"`
+	Topic   Topic `gorm:"foreignKey:TopicID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
 func (instance Partition) TableName() string {
@@ -47,7 +47,7 @@ type Message struct {
 	Offset int64       `gorm:"not null"`
 	Value  interface{} `gorm:"type:json"`
 
-	PartitionID uint64    `gorm:"not null"`
+	PartitionId uint      `gorm:"not null"`
 	Partition   Partition `gorm:"foreignKey:PartitionID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
@@ -56,7 +56,7 @@ func (instance Message) TableName() string {
 }
 
 func (instance Message) String() string {
-	return fmt.Sprintf("Message: %d --> Of Partition %d", instance.ID, instance.PartitionID)
+	return fmt.Sprintf("Message: %d --> Of Partition %d", instance.ID, instance.PartitionId)
 }
 
 // Stores The Last Assigned Partition To A Topic
@@ -64,10 +64,10 @@ type LastAssignedPartition struct {
 	model.AbstractModel
 	ID uint `gorm:"primaryKey"`
 
-	TopicID uint64 `gorm:"unique;not null"`
-	Topic   Topic  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	TopicID uint  `gorm:"unique;not null"`
+	Topic   Topic `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 
-	PartitionID uint64    `gorm:"not null"`
+	PartitionId uint      `gorm:"not null"`
 	Partition   Partition `gorm:"foreignKey:PartitionID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 }
 
@@ -76,5 +76,5 @@ func (instance LastAssignedPartition) TableName() string {
 }
 
 func (instance LastAssignedPartition) String() string {
-	return fmt.Sprintf("Topic: %s's Last Partition Was --> %d", instance.Topic.Name, instance.PartitionID)
+	return fmt.Sprintf("Topic: %s's Last Partition Was --> %d", instance.Topic.Name, instance.PartitionId)
 }

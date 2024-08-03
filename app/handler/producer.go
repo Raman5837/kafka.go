@@ -4,6 +4,7 @@ import (
 	"github.com/Raman5837/kafka.go/app/service"
 	"github.com/Raman5837/kafka.go/app/types"
 	"github.com/Raman5837/kafka.go/app/utils"
+	"github.com/Raman5837/kafka.go/base/config"
 	base "github.com/Raman5837/kafka.go/base/utils"
 	"github.com/gofiber/fiber/v2"
 )
@@ -18,8 +19,10 @@ func ProduceMessageHandler(context *fiber.Ctx) (exception error) {
 		return context.Status(fiber.StatusBadRequest).JSON(base.HttpResponseFail(nil, "Invalid Payload!", exception))
 	}
 
+	config := config.GetKafkaConfig()
 	assigner := utils.NewPartitionAssigner()
-	service := service.NewProducerService(assigner)
+	service := service.NewProducerService(assigner, config.Producer)
+
 	response, additionErr := service.AddNewMessage(&payload)
 
 	if additionErr != nil {

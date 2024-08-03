@@ -18,8 +18,8 @@ type GetPartition struct {
 	Id        uint      `gorm:"column:id" json:"id"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 
-	TopicID     uint   `gorm:"column:topic_id" json:"topic_id"`
-	PartitionId uint64 `gorm:"column:partition_id" json:"partition_id"`
+	TopicID     uint `gorm:"column:topic_id" json:"topic_id"`
+	PartitionId uint `gorm:"column:partition_id" json:"partition_id"`
 }
 
 // To Store Message Object From Repository
@@ -29,7 +29,7 @@ type GetMessage struct {
 
 	Value       interface{} `gorm:"column:value" json:"value"`
 	Offset      uint64      `gorm:"column:offset" json:"offset"`
-	PartitionId uint64      `gorm:"column:partition_id" json:"partition_id"`
+	PartitionId uint        `gorm:"column:partition_id" json:"partition_id"`
 }
 
 // To Store LastAssignedPartition Object From Repository
@@ -37,8 +37,8 @@ type GetLastAssignedPartition struct {
 	Id        uint      `gorm:"column:id" json:"id"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 
-	TopicID     uint   `gorm:"column:topic_id" json:"topic_id"`
-	PartitionId uint64 `gorm:"column:partition_id" json:"partition_id"`
+	TopicId     uint `gorm:"column:topic_id" json:"topic_id"`
+	PartitionId uint `gorm:"column:partition_id" json:"partition_id"`
 }
 
 // To Store Consumer Object From Repository
@@ -46,8 +46,8 @@ type GetConsumer struct {
 	Id        uint      `gorm:"column:id" json:"id"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 
-	GroupID    uint      `gorm:"column:group_id" json:"group_id"`
-	ConsumerID uuid.UUID `gorm:"column:consumer_id" json:"consumer_id"`
+	GroupId    uint      `gorm:"column:group_id" json:"group_id"`
+	ConsumerId uuid.UUID `gorm:"column:consumer_id" json:"consumer_id"`
 }
 
 // To Store ConsumerGroup Object From Repository
@@ -65,7 +65,7 @@ type GetOffset struct {
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 
 	Number      uint64 `gorm:"column:number" json:"number"`
-	ConsumerID  uint   `gorm:"column:consumer_id" json:"consumer_id"`
+	ConsumerId  uint   `gorm:"column:consumer_id" json:"consumer_id"`
 	PartitionId uint   `gorm:"column:partition_id" json:"partition_id"`
 }
 
@@ -74,7 +74,8 @@ type GetConsumerAssignment struct {
 	Id        uint      `gorm:"column:id" json:"id"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 
-	GroupID     uint `gorm:"column:group_id" json:"group_id"`
-	ConsumerID  uint `gorm:"column:consumer_id" json:"consumer_id"`
+	GroupId     uint `gorm:"column:group_id" json:"group_id"`
+	TopicId     uint `gorm:"column:topic_id" json:"topic_id"`
+	ConsumerId  uint `gorm:"column:consumer_id" json:"consumer_id"`
 	PartitionId uint `gorm:"column:partition_id" json:"partition_id"`
 }
